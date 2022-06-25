@@ -13,3 +13,5 @@ GenerateScripts.py \
   --PicardFolder path\to\CleanReads\PicardFolder  \
   --MergedBamsFolder path\to\CleanReads\MergedBamsFolder \
   --FinalSpeciesName SpeciesName
+ 
+See GenerateScripts.py --help for more info
