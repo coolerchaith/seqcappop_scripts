@@ -2,7 +2,9 @@
 
 Helps automate steps 4-9 of the sqcap_pop pipeline by mgharvey (https://github.com/mgharvey/seqcap_pop)
 
-The main command to use is GenerateScripts.py, which accepts the arguments
+The main command to use is GenerateScripts.py, which will create the required folders and generate a .sh file, which can then be run in the console to complete the pipeline. 
+
+The command accepts the arguments
 
 
 GenerateScripts.py \
