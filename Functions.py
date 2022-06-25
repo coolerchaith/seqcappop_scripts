@@ -4,7 +4,7 @@ import argparse
 
 
 def getArgs():
-    parser = argparse.ArgumentParser(description='words here')
+    parser = argparse.ArgumentParser(description='Automates repetitive steps from the seqcap_pop pipeline. This command will generate a .sh file with all of the commands for steps 4-9 for each speciment present in the ContigsToProbesFolder')
     parser.add_argument(
         '--ContigsToProbesFolder',
         help='The folder that output from step 3'
