@@ -2,8 +2,10 @@ from Functions import *
 import argparse
 
 args = getArgs()
-fastaFiles = getListofFastaFiles(args.ContigsToProbesFolder)
-SpeciesID = [x[:-6] for x in fastaFiles]
+#fastaFiles = getListofFastaFilesFromFilesargs.CleanReadsFolder)
+#SpeciesID = [x[:-6] for x in fastaFiles]
+
+SpeciesID = getListofFastaFilesFromFolders(args.CleanReadsFolder)
 
 #contigsToProbeFolder = ('Please type your contigs to probe folder: ')
 #cleanReadsFolder = ('Please input the name for a mapping folder: ')
@@ -60,9 +62,9 @@ else:
 
 
 
-step4(SpeciesID, args.ContigsToProbesFolder, args.CleanReadsFolder , args.MappingFolder)
+step4(SpeciesID, args.ReferenceAssembly, args.CleanReadsFolder , args.MappingFolder)
 step5(SpeciesID, args.MappingFolder)
 step6(SpeciesID, args.MappingFolder, args.PicardJarDirectory, args.PicardFolder)
 step7(SpeciesID, args.PicardJarDirectory, args.PicardFolder)
 step8(SpeciesID, args.PicardJarDirectory, args.PicardFolder)
-step7(SpeciesID, args.PicardJarDirectory, args.PicardFolder, args.MergedBamsFolder, args.FinalMergedSpeciesName)
+step9(SpeciesID, args.PicardJarDirectory, args.PicardFolder, args.MergedBamsFolder, args.FinalSpeciesName)

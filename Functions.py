@@ -1,4 +1,4 @@
-from gc import is_finalized
+#from gc import is_finalized
 import os
 import argparse
 
@@ -6,7 +6,7 @@ import argparse
 def getArgs():
     parser = argparse.ArgumentParser(description='Automates repetitive steps from the seqcap_pop pipeline. This command will generate a .sh file with all of the commands for steps 4-9 for each speciment present in the ContigsToProbesFolder')
     parser.add_argument(
-        '--ContigsToProbesFolder',
+        '--ReferenceAssembly',
         help='The folder that output from step 3'
     )
     parser.add_argument(
@@ -34,12 +34,12 @@ def getArgs():
         help='The name for the merged bam file, exclude extensions'
     )
     args = parser.parse_args()
-    if not args.ContigsToProbesFolder or not args.MappingFolder or not args.CleanReadsFolder or not args.PicardFolder  or not args.MergedBamsFolder  or not args.FinalSpeciesName: 
+    if not args.ReferenceAssembly or not args.MappingFolder or not args.CleanReadsFolder or not args.PicardFolder  or not args.MergedBamsFolder  or not args.FinalSpeciesName: 
         print('missing argument, please fix :)')
         exit()
     return args
 
-def getListofFastaFiles(path):
+def getListofFastaFilesFromFiles(path):
     fastaFiles = []
     for file in os.listdir(path):
         if file.endswith('.fasta'):
@@ -48,7 +48,16 @@ def getListofFastaFiles(path):
             print('No fasta files found')
     return fastaFiles
 
-def step4(sampleIDs, contigsToProbeFolder, cleanReadsFolder, mappingFolder):
+def getListofFastaFilesFromFolders(path):
+    fastaFiles = []
+    for folder in os.listdir(path):
+        if os.path.isdir(path):
+            fastaFiles.append(folder)
+        else:
+            print('No fasta files found')
+    return fastaFiles
+
+def step4(sampleIDs, ReferenceAssembly, cleanReadsFolder, mappingFolder):
     command1 = 'bwa index -a is /path/to/4_match-contigs-to-probes/Genus_species.fasta'
     command2 = 'bwa aln /path/to/4_match-contigs-to-probes/Genus_species.fasta  /path/to/2_clean-reads/Genus_species_1/split-adapter-quality-trimmed/Genus_species_1-READ1.fastq.gz  > /path/to/5-mapping/Genus_species_1_read1.sa.sai'
     command3 = 'bwa aln /path/to/4_match-contigs-to-probes/Genus_species.fasta /path/to/2_clean-reads/Genus_species_1/split-adapter-quality-trimmed/Genus_species_1-READ2.fastq.gz  > /path/to/5-mapping/Genus_species_1_read2.sa.sai'
@@ -57,13 +66,13 @@ def step4(sampleIDs, contigsToProbeFolder, cleanReadsFolder, mappingFolder):
     for x in sampleIDs:
         speciesID = x
 
-        newCommand1 = command1.replace('path/to/4_match-contigs-to-probes',contigsToProbeFolder)
+        newCommand1 = command1.replace('path/to/4_match-contigs-to-probes',ReferenceAssembly)
         finalCommand1 = newCommand1.replace('Genus_species', speciesID)
         file = open('commands.sh', 'a')
         file.write(finalCommand1 + ' &&' + '\n')
         file.close()
 
-        newCommand2 = command2.replace('path/to/4_match-contigs-to-probes',contigsToProbeFolder)
+        newCommand2 = command2.replace('path/to/4_match-contigs-to-probes',ReferenceAssembly)
         newCommand2 = newCommand2.replace('path/to/2_clean-reads', cleanReadsFolder)
         newCommand2 = newCommand2.replace('path/to/5-mapping', mappingFolder)
         newCommand2 = newCommand2.replace('Genus_species', speciesID)
@@ -72,7 +81,7 @@ def step4(sampleIDs, contigsToProbeFolder, cleanReadsFolder, mappingFolder):
         file.write(finalCommand2 + ' &&' + '\n')
         file.close()
 
-        newCommand3 = command3.replace('path/to/4_match-contigs-to-probes',contigsToProbeFolder)
+        newCommand3 = command3.replace('path/to/4_match-contigs-to-probes',ReferenceAssembly)
         newCommand3 = newCommand3.replace('path/to/2_clean-reads', cleanReadsFolder)
         newCommand3 = newCommand3.replace('path/to/5-mapping', mappingFolder)
         newCommand3 = newCommand3.replace('Genus_species', speciesID)
@@ -81,7 +90,7 @@ def step4(sampleIDs, contigsToProbeFolder, cleanReadsFolder, mappingFolder):
         file.write(finalCommand3 + ' &&' + '\n')
         file.close()
 
-        newCommand4 = command4.replace('path/to/4_match-contigs-to-probes',contigsToProbeFolder)
+        newCommand4 = command4.replace('path/to/4_match-contigs-to-probes',ReferenceAssembly)
         newCommand4 = newCommand4.replace('path/to/2_clean-reads', cleanReadsFolder)
         newCommand4 = newCommand4.replace('path/to/5-mapping', mappingFolder)
         newCommand4 = newCommand4.replace('Genus_species', speciesID)
@@ -108,7 +117,7 @@ def step6(sampleIDs, MappingFolder, PicardJarDirectory, PicardFolder):
     for x in sampleIDs:
         speciesID = x
 
-        if args.PicardJarFolder:
+        if args.PicardJarDirectory:
             newCommand1 = command1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
 
         newCommand1 = newCommand1.replace('path/to/5-mapping', MappingFolder)
@@ -124,7 +133,7 @@ def step7(sampleIDs, PicardJarDirectory, PicardFolder):
     args = getArgs()
     for x in sampleIDs:
         speciesID = x
-        if args.PicardJarFolder:
+        if args.PicardJarDirectory:
             newCommand1 = command1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
 
         newCommand1 = newCommand1.replace('path/to/6_picard', PicardFolder)
@@ -138,7 +147,7 @@ def step8(sampleIDs, PicardJarDirectory, PicardFolder):
     args = getArgs()
     for x in sampleIDs:
         speciesID = x
-        if args.PicardJarFolder:
+        if args.PicardJarDirectory:
             newCommand1 = command1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
     
         newCommand1 = newCommand1.replace('path/to/6_picard', PicardFolder)
@@ -147,13 +156,13 @@ def step8(sampleIDs, PicardJarDirectory, PicardFolder):
         file.write(finalCommand1 + ' &&' + '\n')
         file.close()
 
-def step9(sampleIDs, PicardJarDirectory, PicardFolder, MergedBamsFolder, FinalMergedSpeciesName):
+def step9(sampleIDs, PicardJarDirectory, PicardFolder, MergedBamsFolder, FinalSpeciesName):
     commandPart1 =  'java -Xmx2g -jar ~/anaconda/jar/MergeSamFiles.jar SO=coordinate AS=true'
     commandPart2 =  'I=/path/to/6_picard/Genus_species_1-aln_MD.bam'
     commandPart3 =  'O=/path/to/7_merge-bams/Genus_species.bam'
     args = getArgs()
 
-    if args.PicardJarFolder:
+    if args.PicardJarDirectory:
         finalCommandPart1 = commandPart1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
         file = open('commands.sh', 'a')
         file.write(finalCommandPart1 + ' \\\\' + '\n')
@@ -168,7 +177,7 @@ def step9(sampleIDs, PicardJarDirectory, PicardFolder, MergedBamsFolder, FinalMe
         file.close()
     
     newCommandPart3 = commandPart3.replace('path/to/7_merge-bams', MergedBamsFolder)
-    finalCommandPart3 = newCommandPart3.replace('Genus_species', FinalMergedSpeciesName)
+    finalCommandPart3 = newCommandPart3.replace('Genus_species', FinalSpeciesName)
 
 
         

@@ -1,0 +1,7 @@
+TrimmomaticPE: Started with arguments: -phred33 /home/jane/run6/clean/Oxylabes_madagascariensis_FMNH352915/raw-reads/Oxylabes_madagascariensis_FMNH352915-READ1.fastq.gz /home/jane/run6/clean/Oxylabes_madagascariensis_FMNH352915/raw-reads/Oxylabes_madagascariensis_FMNH352915-READ2.fastq.gz /home/jane/run6/clean/Oxylabes_madagascariensis_FMNH352915/split-adapter-quality-trimmed/Oxylabes_madagascariensis_FMNH352915-READ1.fastq.gz /home/jane/run6/clean/Oxylabes_madagascariensis_FMNH352915/split-adapter-quality-trimmed/Oxylabes_madagascariensis_FMNH352915-READ1-single.fastq.gz /home/jane/run6/clean/Oxylabes_madagascariensis_FMNH352915/split-adapter-quality-trimmed/Oxylabes_madagascariensis_FMNH352915-READ2.fastq.gz /home/jane/run6/clean/Oxylabes_madagascariensis_FMNH352915/split-adapter-quality-trimmed/Oxylabes_madagascariensis_FMNH352915-READ2-single.fastq.gz ILLUMINACLIP:/home/jane/run6/clean/Oxylabes_madagascariensis_FMNH352915/adapters.fasta:2:30:10 LEADING:5 TRAILING:15 SLIDINGWINDOW:4:15 MINLEN:40
+Multiple cores found: Using 16 threads
+Using Long Clipping Sequence: 'GATCGGAAGAGCACACGTCTGAACTCCAGTCACACTCGTTGATCTCGTATGCCGTCTTCTGCTTG'
+Using Long Clipping Sequence: 'AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTCACAAGTCGTGTAGATCTCGGTGGTCGCCGTATCATT'
+ILLUMINACLIP: Using 0 prefix pairs, 2 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Input Read Pairs: 1416872 Both Surviving: 1404391 (99.12%) Forward Only Surviving: 8571 (0.60%) Reverse Only Surviving: 1129 (0.08%) Dropped: 2781 (0.20%)
+TrimmomaticPE: Completed successfully
