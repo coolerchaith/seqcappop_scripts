@@ -1,7 +1,0 @@
-TrimmomaticPE: Started with arguments: -phred33 /home/nblock/Documents/Oxylabes_MH_V01/2_Clean_reads/Oxylabes_396173/raw-reads/Oxylabes_396173-READ1.fastq.gz /home/nblock/Documents/Oxylabes_MH_V01/2_Clean_reads/Oxylabes_396173/raw-reads/Oxylabes_396173-READ2.fastq.gz /home/nblock/Documents/Oxylabes_MH_V01/2_Clean_reads/Oxylabes_396173/split-adapter-quality-trimmed/Oxylabes_396173-READ1.fastq.gz /home/nblock/Documents/Oxylabes_MH_V01/2_Clean_reads/Oxylabes_396173/split-adapter-quality-trimmed/Oxylabes_396173-READ1-single.fastq.gz /home/nblock/Documents/Oxylabes_MH_V01/2_Clean_reads/Oxylabes_396173/split-adapter-quality-trimmed/Oxylabes_396173-READ2.fastq.gz /home/nblock/Documents/Oxylabes_MH_V01/2_Clean_reads/Oxylabes_396173/split-adapter-quality-trimmed/Oxylabes_396173-READ2-single.fastq.gz ILLUMINACLIP:/home/nblock/Documents/Oxylabes_MH_V01/2_Clean_reads/Oxylabes_396173/adapters.fasta:2:30:10 LEADING:5 TRAILING:15 SLIDINGWINDOW:4:15 MINLEN:40
-Multiple cores found: Using 12 threads
-Using Long Clipping Sequence: 'AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT'
-Using Long Clipping Sequence: 'AGATCGGAAGAGCACACGTCTGAACTCCAGTCA'
-ILLUMINACLIP: Using 0 prefix pairs, 2 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
-Input Read Pairs: 2503330 Both Surviving: 2233114 (89.21%) Forward Only Surviving: 249225 (9.96%) Reverse Only Surviving: 8472 (0.34%) Dropped: 12519 (0.50%)
-TrimmomaticPE: Completed successfully

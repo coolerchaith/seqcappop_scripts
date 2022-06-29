@@ -1,7 +1,0 @@
-TrimmomaticPE: Started with arguments: -phred33 /Users/janeyounger/Dropbox/UCEs/Run2/trimmed/17MJR0758/raw-reads/17MJR0758-READ1.fastq.gz /Users/janeyounger/Dropbox/UCEs/Run2/trimmed/17MJR0758/raw-reads/17MJR0758-READ2.fastq.gz /Users/janeyounger/Dropbox/UCEs/Run2/trimmed/17MJR0758/split-adapter-quality-trimmed/17MJR0758-READ1.fastq.gz /Users/janeyounger/Dropbox/UCEs/Run2/trimmed/17MJR0758/split-adapter-quality-trimmed/17MJR0758-READ1-single.fastq.gz /Users/janeyounger/Dropbox/UCEs/Run2/trimmed/17MJR0758/split-adapter-quality-trimmed/17MJR0758-READ2.fastq.gz /Users/janeyounger/Dropbox/UCEs/Run2/trimmed/17MJR0758/split-adapter-quality-trimmed/17MJR0758-READ2-single.fastq.gz ILLUMINACLIP:/Users/janeyounger/Dropbox/UCEs/Run2/trimmed/17MJR0758/adapters.fasta:2:30:10 LEADING:5 TRAILING:15 SLIDINGWINDOW:4:15 MINLEN:40
-Multiple cores found: Using 8 threads
-Using Long Clipping Sequence: 'GATCGGAAGAGCACACGTCTGAACTCCAGTCACAGCGATAGATCTCGTATGCCGTCTTCTGCTTG'
-Using Long Clipping Sequence: 'AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGGCTATAGTGTAGATCTCGGTGGTCGCCGTATCATT'
-ILLUMINACLIP: Using 0 prefix pairs, 2 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
-Input Read Pairs: 801891 Both Surviving: 764403 (95.33%) Forward Only Surviving: 28530 (3.56%) Reverse Only Surviving: 5862 (0.73%) Dropped: 3096 (0.39%)
-TrimmomaticPE: Completed successfully
