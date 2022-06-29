@@ -1,0 +1,10 @@
+python GenerateScripts.py \
+	--ContigsToProbesFolder 4_Phyluce_Alignment \
+	--CleanReadsFolder 2_Clean_reads \
+	--MappingFolder 5_Velvet_Mapping \
+	--PicardJarDirectory ~/miniconda3/jar/picard.jar \
+	--PicardFolder 6_Picard \
+	--MergedBamsFolder 7_MergedBam \
+	--FinalSpeciesName Oxylabes
+
+python FunctionTest.py --CleanReadsFolder 2_Clean_reads
