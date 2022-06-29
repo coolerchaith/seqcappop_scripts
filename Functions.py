@@ -50,11 +50,12 @@ def getListofFastaFilesFromFiles(path):
 
 def getListofFastaFilesFromFolders(path):
     fastaFiles = []
-    for folder in os.listdir(path):
-        if os.path.isdir(path):
-            fastaFiles.append(folder)
-        else:
-            print('No fasta files found')
+    for x in os.listdir(path):
+        pathName = path + '/' + x
+        if os.path.isdir(pathName):
+            fastaFiles.append(x)
+    if fastaFiles == []:
+        print('No folders found')
     return fastaFiles
 
 def step4(sampleIDs, ReferenceAssembly, cleanReadsFolder, mappingFolder):
@@ -167,6 +168,8 @@ def step9(sampleIDs, PicardJarDirectory, PicardFolder, MergedBamsFolder, FinalSp
         file = open('commands.sh', 'a')
         file.write(finalCommandPart1 + ' \\\\' + '\n')
         file.close()
+
+
     for x in sampleIDs:
         speciesID = x
 
@@ -178,6 +181,10 @@ def step9(sampleIDs, PicardJarDirectory, PicardFolder, MergedBamsFolder, FinalSp
     
     newCommandPart3 = commandPart3.replace('path/to/7_merge-bams', MergedBamsFolder)
     finalCommandPart3 = newCommandPart3.replace('Genus_species', FinalSpeciesName)
+    file = open('commands.sh', 'a')
+    file.write(finalCommandPart3)
+    file.close()
+
 
 
         

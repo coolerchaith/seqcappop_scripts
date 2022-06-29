@@ -4,6 +4,8 @@ Helps automate steps 4-9 of the sqcap_pop pipeline by mgharvey (https://github.c
 
 The main command to use is GenerateScripts.py, which will create the required folders and generate a .sh file, which can then be run in the console to complete the pipeline. 
 
+It is highly recommended to have only the samples you are going to be processing in your clean reads folder, or make a new folder and only include those samples. Otherwise, the script will assume that each sample in the clean reads folder is going to be analyzed. 
+
 The command accepts the arguments
 
 
