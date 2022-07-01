@@ -13,7 +13,11 @@ SpeciesID = getListofFastaFilesFromFolders(args.CleanReadsFolder)
 
 
 if os.path.exists('commands.sh'):
-    overwrite = input('Command file already found, do you wish to overwrite? Y/N  ')
+    
+    if not args.Overwrite:
+        overwrite = input('Command file already found, do you wish to overwrite? Y/N  ')
+    else:
+        overwrite= 'Y'
     if overwrite == 'Y':
         os.remove('commands.sh')
         file = open('commands.sh', 'w')
@@ -27,8 +31,13 @@ else:
     file.write('')
     file.close()
 
+
 if os.path.exists(args.MappingFolder):
-    overwrite = input('Mapping Folder already found, do you wish to overwrite? Y/N  ')
+    if not args.Overwrite:
+        overwrite = input('Mapping Folder already found, do you wish to overwrite? Y/N  ')
+    else:
+        overwrite= 'Y'
+
     if overwrite == 'Y':
         os.rmdir(args.MappingFolder)
         os.makedirs(args.MappingFolder)
@@ -38,8 +47,14 @@ if os.path.exists(args.MappingFolder):
 else:
     os.makedirs(args.MappingFolder)
 
+
+
+
 if os.path.exists(args.PicardFolder):
-    overwrite = input('Picard Folder already found, do you wish to overwrite? Y/N  ')
+    if not args.Overwrite:
+        overwrite = input('Picard Folder already found, do you wish to overwrite? Y/N  ')
+    else:
+        overwrite= 'Y'
     if overwrite == 'Y':
         os.rmdir(args.PicardFolder)
         os.makedirs(args.PicardFolder)
@@ -50,7 +65,10 @@ else:
     os.makedirs(args.PicardFolder)
 
 if os.path.exists(args.MergedBamsFolder):
-    overwrite = input('Merged bams folder already found, do you wish to overwrite? Y/N  ')
+    if not args.Overwrite:
+        overwrite = input('Merged bams folder already found, do you wish to overwrite? Y/N  ')
+    else:
+        overwrite= 'Y'
     if overwrite == 'Y':
         os.rmdir(args.MergedBamsFolder)
         os.makedirs(args.MergedBamsFolder)
