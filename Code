@@ -1,11 +1,13 @@
 python /home/matthew/Documents/Python/seqcappop_scripts/GenerateScripts.py \
-	--ReferenceAssembly joined_fasta_library.fasta \
+	--ReferenceAssembly 5_Secapr_reference_assembly/reference_seqs/joined_fasta_library.fasta \
 	--CleanReadsFolder 2_Clean_reads \
 	--MappingFolder 5_Velvet_Mapping \
-	--PicardJarDirectory ~/miniconda3/jar/picard.jar \
+	--PicardJarDirectory miniconda3/jar/picard.jar \
 	--PicardFolder 6_Picard \
 	--MergedBamsFolder 7_MergedBam \
 	--FinalSpeciesName Oxylabes \
-	--SingleReference
+	--SingleReference \
+	--SinglePicardJar \
+	--Overwrite
 
 python FunctionTest.py --CleanReadsFolder 2_Clean_reads

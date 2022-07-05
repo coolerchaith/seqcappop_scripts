@@ -19,7 +19,7 @@ def getArgs():
     )
     parser.add_argument(
         '--PicardJarDirectory',
-        help='Optional: The directory for your Picard.jar file. Leave blank if you do not need to change this.'
+        help='Optional: The directory for your Picard.jar file. Leave blank if your directory matches the seqcap pipeline.'
     )
     parser.add_argument(
         '--PicardFolder',
@@ -37,6 +37,13 @@ def getArgs():
         '--SingleReference',
         action="store_true",
         help='Optional, add if you are using only a single reference file'
+    )
+    (
+    parser.add_argument(
+        '--SinglePicardJar',
+        action="store_true",
+        help='Optional, add if you need to define picard commands like CleanSam (required if using a newer version of picard that only includes picard.jar)'
+    )
     )
     parser.add_argument(
         '--Overwrite',
@@ -102,7 +109,7 @@ def step4(sampleIDs, ReferenceAssembly, cleanReadsFolder, mappingFolder):
         file.write(finalCommand3 + ' &&' + '\n')
         file.close()
 
-        newCommand4 = command4.replace('/path/to/4_match-contigs-to-probes',ReferenceAssembly)
+        newCommand4 = command4.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta',ReferenceAssembly)
         newCommand4 = newCommand4.replace('/path/to/2_clean-reads', cleanReadsFolder)
         newCommand4 = newCommand4.replace('/path/to/5-mapping', mappingFolder)
         finalCommand4 = newCommand4.replace('Genus_species', speciesID)
@@ -128,8 +135,14 @@ def step6(sampleIDs, MappingFolder, PicardJarDirectory, PicardFolder):
     for x in sampleIDs:
         speciesID = x
 
-        if args.PicardJarDirectory:
-            newCommand1 = command1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
+        if args.PicardJarDirectory: 
+            if args.SinglePicardJar == True:
+                newPicardJarDirectory = PicardJarDirectory + ' CleanSam'  
+                newCommand1 = command1.replace('anaconda/jar/CleanSam.jar', newPicardJarDirectory)
+            else:
+                newCommand1 = command1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
+        
+
 
         newCommand1 = newCommand1.replace('/path/to/5-mapping', MappingFolder)
         newCommand1 = newCommand1.replace('/path/to/6_picard', PicardFolder)
@@ -144,8 +157,14 @@ def step7(sampleIDs, PicardJarDirectory, PicardFolder):
     args = getArgs()
     for x in sampleIDs:
         speciesID = x
+
         if args.PicardJarDirectory:
-            newCommand1 = command1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
+            if args.SinglePicardJar == True:
+                newPicardJarDirectory = PicardJarDirectory + ' AddOrReplaceReadGroups'  
+                newCommand1 = command1.replace('anaconda/jar/AddOrReplaceReadGroups.jar', newPicardJarDirectory)
+            else:
+                newCommand1 = command1.replace('anaconda/jar/AddOrReplaceReadGroups.jar', PicardJarDirectory)
+        
 
         newCommand1 = newCommand1.replace('/path/to/6_picard', PicardFolder)
         finalCommand1 = newCommand1.replace('Genus_species', speciesID)
@@ -156,10 +175,16 @@ def step7(sampleIDs, PicardJarDirectory, PicardFolder):
 def step8(sampleIDs, PicardJarDirectory, PicardFolder):
     command1 = 'java -Xmx2g -jar ~/anaconda/jar/MarkDuplicates.jar I=/path/to/6_picard/Genus_species-aln_RG.bam O=/path/to/6_picard/Genus_species-aln_MD.bam METRICS_FILE=/path/to/6_picard/Genus_species.metrics MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=250 ASSUME_SORTED=true REMOVE_DUPLICATES=false'
     args = getArgs()
+    
     for x in sampleIDs:
         speciesID = x
-        if args.PicardJarDirectory:
-            newCommand1 = command1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
+
+        if args.PicardJarDirectory: 
+            if args.SinglePicardJar == True:
+                newPicardJarDirectory = PicardJarDirectory + ' MarkDuplicates'  
+                newCommand1 = command1.replace('anaconda/jar/MarkDuplicates.jar', newPicardJarDirectory)
+            elif args.PicardJarDirectory:
+                newCommand1 = command1.replace('anaconda/jar/MarkDuplicates.jar', PicardJarDirectory)
     
         newCommand1 = newCommand1.replace('/path/to/6_picard', PicardFolder)
         finalCommand1 = newCommand1.replace('Genus_species', speciesID)
@@ -174,10 +199,18 @@ def step9(sampleIDs, PicardJarDirectory, PicardFolder, MergedBamsFolder, FinalSp
     args = getArgs()
 
     if args.PicardJarDirectory:
-        finalCommandPart1 = commandPart1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
-        file = open('commands.sh', 'a')
-        file.write(finalCommandPart1 + ' \\' + '\n')
-        file.close()
+        if args.SinglePicardJar == True:
+            newPicardJarDirectory = PicardJarDirectory + ' MergeSamFiles'  
+            finalCommandPart1 = commandPart1.replace('anaconda/jar/MarkDuplicates.jar', newPicardJarDirectory)
+            file = open('commands.sh', 'a')
+            file.write(finalCommandPart1 + ' \\' + '\n')
+            file.close()
+
+        else:
+            finalCommandPart1 = commandPart1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
+            file = open('commands.sh', 'a')
+            file.write(finalCommandPart1 + ' \\' + '\n')
+            file.close()
 
 
     for x in sampleIDs:
