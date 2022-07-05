@@ -194,20 +194,20 @@ def step8(sampleIDs, PicardJarDirectory, PicardFolder):
 
 def step9(sampleIDs, PicardJarDirectory, PicardFolder, MergedBamsFolder, FinalSpeciesName):
     commandPart1 =  'java -Xmx2g -jar ~/anaconda/jar/MergeSamFiles.jar SO=coordinate AS=true'
-    commandPart2 =  'I=/path/to/6_picard/Genus_specie-aln_MD.bam'
+    commandPart2 =  'I=/path/to/6_picard/Genus_species-aln_MD.bam'
     commandPart3 =  'O=/path/to/7_merge-bams/Genus_species.bam'
     args = getArgs()
 
     if args.PicardJarDirectory:
         if args.SinglePicardJar == True:
             newPicardJarDirectory = PicardJarDirectory + ' MergeSamFiles'  
-            finalCommandPart1 = commandPart1.replace('anaconda/jar/MarkDuplicates.jar', newPicardJarDirectory)
+            finalCommandPart1 = commandPart1.replace('anaconda/jar/MergeSamFiles.jar', newPicardJarDirectory)
             file = open('commands.sh', 'a')
             file.write(finalCommandPart1 + ' \\' + '\n')
             file.close()
 
         else:
-            finalCommandPart1 = commandPart1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
+            finalCommandPart1 = commandPart1.replace('anaconda/jar/MergeSamFiles.jar', PicardJarDirectory)
             file = open('commands.sh', 'a')
             file.write(finalCommandPart1 + ' \\' + '\n')
             file.close()
