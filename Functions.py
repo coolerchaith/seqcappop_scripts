@@ -23,7 +23,7 @@ def getArgs():
     )
     parser.add_argument(
         '--PicardFolder',
-        help='The folder to output the Picard outputs'
+        help='The folder for the Picard outputs'
     )
     parser.add_argument(
         '--MergedBamsFolder',
@@ -38,20 +38,31 @@ def getArgs():
         action="store_true",
         help='Optional, add if you are using only a single reference file'
     )
-    (
     parser.add_argument(
         '--SinglePicardJar',
         action="store_true",
         help='Optional, add if you need to define picard commands like CleanSam (required if using a newer version of picard that only includes picard.jar)'
     )
+    parser.add_argument(
+        '--GATKDirectory',
+        help='The directory of your GATK.jar file'
+    )
+    parser.add_argument(
+        '--GATKOutputFolder',
+        help ='The folder for the GATK outputs'
     )
     parser.add_argument(
         '--Overwrite',
         action="store_true",
         help='Optional, add if you want to override existing outputs automatically'
     )
+    parser.add_argument(
+        '--DontMakeFolders',
+        action="store_true",
+        help='Optional, add if you dont want to make new folders'
+    )
     args = parser.parse_args()
-    if not args.ReferenceAssembly or not args.MappingFolder or not args.CleanReadsFolder or not args.PicardFolder  or not args.MergedBamsFolder  or not args.FinalSpeciesName: 
+    if not args.ReferenceAssembly or not args.MappingFolder or not args.CleanReadsFolder or not args.PicardFolder  or not args.MergedBamsFolder  or not args.FinalSpeciesName or not args.GATKDirectory: 
         print('missing argument, please fix :)')
         exit()
     return args
@@ -79,6 +90,15 @@ def saveToFile(finalCommand):
     file = open('commands.sh', 'a')
     file.write(finalCommand + ' &&' + '\n')
     file.close()
+
+def gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
+    newCommand = command.replace('anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar', GATKDirectory)
+    newCommand1 = command.replace('/path/to/4_match-contigs-to-probes', mappingFolder)
+    newCommand = newCommand.replace('Genus_species.fasta', ReferenceAssembly)
+    newCommand = newCommand.replace('/path/to/7_merge-bams', MergedBamsFolder)
+    newCommand = newCommand.replace('Genus_species', FinalSpeciesName)
+    finalCommand = newCommand.replace('path/to/8_GATK',GATKOutputFolder)
+    saveToFile(finalCommand)
 
 def step4(sampleIDs, ReferenceAssembly, cleanReadsFolder, mappingFolder):
     command1 = 'bwa index -a is /path/to/4_match-contigs-to-probes/Genus_species.fasta'
@@ -202,17 +222,89 @@ def step9(sampleIDs, PicardJarDirectory, PicardFolder, MergedBamsFolder, FinalSp
     finalCommandPart3 = newCommandPart3.replace('Genus_species', FinalSpeciesName)
     saveToFile(finalCommandPart3)
 
-def step10():
-    pass
+def step10(MergedBamsFolder, FinalSpeciesName):
+    args = getArgs()
+    command1 = 'samtools index 7_merge-bams/Genus_species.bam'
 
-def step11():
-    pass
+    newCommand1 = command1.replace('7_merge-bams', MergedBamsFolder)
+    finalCommand1 = newCommand1.replace('Genus_species', FinalSpeciesName)
+    saveToFile(finalCommand1)
 
-def step11():
-    pass
 
-def step11():
-    pass
-        
-def step11():
-    pass
+
+def step11(PicardJarDirectory, mappingFolder, ReferenceAssembly, FinalSpeciesName):
+    args = getArgs()
+    command1 = 'java -Xmx2g -jar ~/anaconda/pkgs/picard-1.106-0/jar/CreateSequenceDictionary.jar R=/path/to/4_match-contigs-to-probes/Genus_species.fasta O=/path/to/4_match-contigs-to-probes/Genus_species.dict'
+
+    if args.PicardJarDirectory:
+        if args.SinglePicardJar == True:
+            newPicardJarDirectory = PicardJarDirectory + ' CreateSequenceDictionary'  
+            command1 = command1.replace('anaconda/pkgs/picard-1.106-0/jar/CreateSequenceDictionary.jar', newPicardJarDirectory)
+
+        else:
+            command1 = command1.replace('anaconda/pkgs/picard-1.106-0/jar/CreateSequenceDictionary.jar', PicardJarDirectory)
+           
+    
+    newCommand1 = command1.replace('4_match-contigs-to-probes', mappingFolder)
+    newCommand1 = newCommand1.replace('Genus_species.fasta', ReferenceAssembly)
+    finalCommand1 = newCommand1.replace('Genus_species', FinalSpeciesName)
+    saveToFile(finalCommand1)
+
+
+def step12(mappingFolder, ReferenceAssembly):
+    args = getArgs()
+    command1 = 'samtools faidx /path/to/4_match-contigs-to-probes/Genus_species.fasta'
+
+    newCommand1 = command1.replace('4_match-contigs-to-probes', mappingFolder)
+    finalCommand1 = newCommand1.replace('Genus_species.fasta', ReferenceAssembly)
+    saveToFile(finalCommand1)
+
+def step13(GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
+    args = getArgs()
+    command = 'java -Xmx2g -jar ~/anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar -T RealignerTargetCreator -R /path/to/4_match-contigs-to-probes/Genus_species.fasta -I /path/to/7_merge-bams/Genus_species.bam  --minReadsAtLocus 7 -o /path/to/8_GATK/Genus_species.intervals'
+
+    gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder)
+
+def step14(GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
+    args = getArgs()
+    command = 'java -Xmx2g -jar ~/anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar -T IndelRealigner -R /path/to/4_match-contigs-to-probes/Genus_species.fasta -I /path/to/7-merge/Genus_species.bam  -targetIntervals /path/to/8_GATK/Genus_species.intervals -LOD 3.0 -o /path/to/8_GATK/Genus_species_RI.bam'
+
+    gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder)
+
+def step15(GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
+    args = getArgs()
+    command = 'java -Xmx2g -jar ~/anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar -T UnifiedGenotyper -R /path/to/4_match-contigs-to-probes/Genus_species.fasta -I /path/to/8_GATK/Genus_species_RI.bam -gt_mode DISCOVERY -o /path/to/8_GATK/Genus_species_raw_SNPs.vcf -ploidy 2 -rf BadCigar'
+
+    gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder)
+
+def step16(GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
+    args = getArgs()
+    command = 'java -Xmx2g -jar ~/anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar -T VariantAnnotator -R /path/to/4_match-contigs-to-probes/Genus_species.fasta -I /path/to/8_GATK/Genus_species_RI.bam -G StandardAnnotation -V:variant,VCF /path/to/8_GATK/Genus_species_raw_SNPs.vcf -XA SnpEff -o /path/to/8_GATK/Genus_species_SNPs_annotated.vcf -rf BadCigar'
+
+    gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder)
+
+def step17(GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
+    args = getArgs()
+    command = 'java -Xmx2g -jar ~/anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar -T UnifiedGenotyper -R /path/to/4_match-contigs-to-probes/Genus_species.fasta -I /path/to/8_GATK/Genus_species_RI.bam -gt_mode DISCOVERY -glm INDEL -o /path/to/8_GATK/Genus_species_SNPs_indels.vcf -rf BadCigar'
+
+    gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder)
+
+def step18(GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
+    args = getArgs()
+    command = 'java -Xmx2g -jar ~/anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar -T VariantFiltration -R /path/to/4_match-contigs-to-probes/Genus_species.fasta -V /path/to/8_GATK/Genus_species_raw_SNPs.vcf --mask /path/to/8_GATK/Genus_species_SNPs_indels.vcf --maskExtension 5 --maskName InDel --clusterWindowSize 10 --filterExpression "MQ0 >= 4 && ((MQ0 / (1.0 * DP)) > 0.1)" --filterName "BadValidation" --filterExpression "QUAL < 30.0" --filterName "LowQual" --filterExpression "QD < 5.0" --filterName "LowVQCBD" -o /path/to/8_GATK/Genus_species_SNPs_no_indels.vcf  -rf BadCigar'
+
+    gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder)
+
+def step19(FinalSpeciesName, GATKOutputFolder):
+    args = getArgs()
+    command1 = ''' cat /path/to/8_GATK/Genus_species_SNPs_no_indels.vcf | grep 'PASS\|^#' > /path/to/8_GATK/Genus_species_SNPs_pass-only.vcf '''
+
+    newCommand1 = command1.replace('path/to/8_GATK', GATKOutputFolder)
+    finalCommand1 = newCommand1.replace('Genus_species', FinalSpeciesName)
+    saveToFile(finalCommand1)
+
+def step20(GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
+    args = getArgs()
+    command = 'java -Xmx2g -jar ~/anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar -T ReadBackedPhasing -R /path/to/4_match-contigs-to-probes/Genus_species.fasta -I /path/to/8_GATK/Genus_species_RI.bam --variant /path/to/8_GATK/Genus_species_SNPs_pass-only.vcf -L /path/to/8_GATK/Genus_species_SNPs_pass-only.vcf -o /path/to/8_GATK/Genus_species_SNPs_phased.vcf --phaseQualityThresh 20.0 -rf BadCigar'
+
+    gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder)
