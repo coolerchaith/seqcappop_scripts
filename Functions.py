@@ -93,11 +93,11 @@ def saveToFile(finalCommand):
 
 def gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
     newCommand = command.replace('anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar', GATKDirectory)
-    newCommand1 = command.replace('/path/to/4_match-contigs-to-probes', mappingFolder)
-    newCommand = newCommand.replace('Genus_species.fasta', ReferenceAssembly)
+    #newCommand = newCommand.replace('/path/to/4_match-contigs-to-probes', mappingFolder)
+    newCommand = newCommand.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta', ReferenceAssembly)
     newCommand = newCommand.replace('/path/to/7_merge-bams', MergedBamsFolder)
     newCommand = newCommand.replace('Genus_species', FinalSpeciesName)
-    finalCommand = newCommand.replace('path/to/8_GATK',GATKOutputFolder)
+    finalCommand = newCommand.replace('/path/to/8_GATK',GATKOutputFolder)
     saveToFile(finalCommand)
 
 def step4(sampleIDs, ReferenceAssembly, cleanReadsFolder, mappingFolder):
@@ -243,10 +243,11 @@ def step11(PicardJarDirectory, mappingFolder, ReferenceAssembly, FinalSpeciesNam
 
         else:
             command1 = command1.replace('anaconda/pkgs/picard-1.106-0/jar/CreateSequenceDictionary.jar', PicardJarDirectory)
-           
     
-    newCommand1 = command1.replace('4_match-contigs-to-probes', mappingFolder)
-    newCommand1 = newCommand1.replace('Genus_species.fasta', ReferenceAssembly)
+    #needed to make the dictionary file and reference file be in the same location/have the same name without requiring another argument
+    NewReferenceAssembly = ReferenceAssembly.replace('.fasta', '')
+    
+    newCommand1 = command1.replace('/path/to/4_match-contigs-to-probes/Genus_species', NewReferenceAssembly)
     finalCommand1 = newCommand1.replace('Genus_species', FinalSpeciesName)
     saveToFile(finalCommand1)
 
@@ -255,8 +256,7 @@ def step12(mappingFolder, ReferenceAssembly):
     args = getArgs()
     command1 = 'samtools faidx /path/to/4_match-contigs-to-probes/Genus_species.fasta'
 
-    newCommand1 = command1.replace('4_match-contigs-to-probes', mappingFolder)
-    finalCommand1 = newCommand1.replace('Genus_species.fasta', ReferenceAssembly)
+    finalCommand1 = command1.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta', ReferenceAssembly)
     saveToFile(finalCommand1)
 
 def step13(GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
@@ -265,9 +265,10 @@ def step13(GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, Fi
 
     gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder)
 
+
 def step14(GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
     args = getArgs()
-    command = 'java -Xmx2g -jar ~/anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar -T IndelRealigner -R /path/to/4_match-contigs-to-probes/Genus_species.fasta -I /path/to/7-merge/Genus_species.bam  -targetIntervals /path/to/8_GATK/Genus_species.intervals -LOD 3.0 -o /path/to/8_GATK/Genus_species_RI.bam'
+    command = 'java -Xmx2g -jar ~/anaconda/GenomeAnalysisTK-3.3-0/GenomeAnalysisTK.jar -T IndelRealigner -R /path/to/4_match-contigs-to-probes/Genus_species.fasta -I /path/to/7_merge-bams/Genus_species.bam  -targetIntervals /path/to/8_GATK/Genus_species.intervals -LOD 3.0 -o /path/to/8_GATK/Genus_species_RI.bam'
 
     gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder)
 
