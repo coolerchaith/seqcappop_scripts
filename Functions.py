@@ -75,6 +75,11 @@ def getListofFastaFilesFromFolders(path):
         print('No folders found')
     return fastaFiles
 
+def saveToFile(finalCommand):
+    file = open('commands.sh', 'a')
+    file.write(finalCommand + ' &&' + '\n')
+    file.close()
+
 def step4(sampleIDs, ReferenceAssembly, cleanReadsFolder, mappingFolder):
     command1 = 'bwa index -a is /path/to/4_match-contigs-to-probes/Genus_species.fasta'
     command2 = 'bwa aln /path/to/4_match-contigs-to-probes/Genus_species.fasta /path/to/2_clean-reads/Genus_species/split-adapter-quality-trimmed/Genus_species-READ1.fastq.gz  > /path/to/5-mapping/Genus_species_read1.sa.sai'
@@ -85,38 +90,27 @@ def step4(sampleIDs, ReferenceAssembly, cleanReadsFolder, mappingFolder):
     for x in sampleIDs:
         speciesID = x
 
-
         newCommand1 = command1.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta', ReferenceAssembly)
         finalCommand1 = newCommand1.replace('/Genus_species.fasta', speciesID)
-        file = open('commands.sh', 'a')
-        file.write(finalCommand1 + ' &&' + '\n')
-        file.close()
+        saveToFile(finalCommand1)
 
         newCommand2 = command2.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta', ReferenceAssembly)
         newCommand2 = newCommand2.replace('/path/to/2_clean-reads', cleanReadsFolder)
         newCommand2 = newCommand2.replace('/path/to/5-mapping', mappingFolder)
-        #newCommand2 = newCommand2.replace('/Genus_species.fasta', speciesID)
         finalCommand2 = newCommand2.replace('Genus_species', speciesID)
-        file = open('commands.sh', 'a')
-        file.write(finalCommand2 + ' &&' + '\n')
-        file.close()
-
+        saveToFile(finalCommand2)
+        
         newCommand3 = command3.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta', ReferenceAssembly)
         newCommand3 = newCommand3.replace('/path/to/2_clean-reads', cleanReadsFolder)
         newCommand3 = newCommand3.replace('/path/to/5-mapping', mappingFolder)
         finalCommand3 = newCommand3.replace('Genus_species', speciesID)
-        file = open('commands.sh', 'a')
-        file.write(finalCommand3 + ' &&' + '\n')
-        file.close()
+        saveToFile(finalCommand3)
 
         newCommand4 = command4.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta',ReferenceAssembly)
         newCommand4 = newCommand4.replace('/path/to/2_clean-reads', cleanReadsFolder)
         newCommand4 = newCommand4.replace('/path/to/5-mapping', mappingFolder)
         finalCommand4 = newCommand4.replace('Genus_species', speciesID)
-        file = open('commands.sh', 'a')
-        file.write(finalCommand4 + ' &&' + '\n')
-        file.write('\n')
-        file.close()
+        saveToFile(finalCommand4)
 
 def step5(sampleIDs, MappingFolder):
     command1 = 'samtools view -bS /path/to/5-mapping/Genus_species-aln.sam > /path/to/5-mapping/Genus_species-aln.bam'
@@ -125,9 +119,7 @@ def step5(sampleIDs, MappingFolder):
 
         newCommand1 = command1.replace('/path/to/5-mapping', MappingFolder)
         finalCommand1 = newCommand1.replace('Genus_species', speciesID)
-        file = open('commands.sh', 'a')
-        file.write(finalCommand1 + ' &&' + '\n')
-        file.close()
+        saveToFile(finalCommand1)
 
 def step6(sampleIDs, MappingFolder, PicardJarDirectory, PicardFolder):
     command1 = 'java -jar ~/anaconda/jar/CleanSam.jar I=/path/to/5-mapping/Genus_species-aln.bam O=/path/to/6_picard/Genus_species-aln_CL.bam VALIDATION_STRINGENCY=SILENT'
@@ -142,15 +134,10 @@ def step6(sampleIDs, MappingFolder, PicardJarDirectory, PicardFolder):
             else:
                 newCommand1 = command1.replace('anaconda/jar/CleanSam.jar', PicardJarDirectory)
         
-
-
         newCommand1 = newCommand1.replace('/path/to/5-mapping', MappingFolder)
         newCommand1 = newCommand1.replace('/path/to/6_picard', PicardFolder)
         finalCommand1 = newCommand1.replace('Genus_species', speciesID)
-
-        file = open('commands.sh', 'a')
-        file.write(finalCommand1 + ' &&' + '\n')
-        file.close()
+        saveToFile(finalCommand1)
 
 def step7(sampleIDs, PicardJarDirectory, PicardFolder):
     command1 = 'java -Xmx2g -jar ~/anaconda/jar/AddOrReplaceReadGroups.jar I=/path/to/6_picard/Genus_species-aln_CL.bam  O=/path/to/6_picard/Genus_species-aln_RG.bam SORT_ORDER=coordinate RGPL=illumina RGPU=TestXX RGLB=Lib1 RGID=Genus_species RGSM=Genus_species VALIDATION_STRINGENCY=LENIENT'
@@ -165,12 +152,9 @@ def step7(sampleIDs, PicardJarDirectory, PicardFolder):
             else:
                 newCommand1 = command1.replace('anaconda/jar/AddOrReplaceReadGroups.jar', PicardJarDirectory)
         
-
         newCommand1 = newCommand1.replace('/path/to/6_picard', PicardFolder)
         finalCommand1 = newCommand1.replace('Genus_species', speciesID)
-        file = open('commands.sh', 'a')
-        file.write(finalCommand1 + ' &&' + '\n')
-        file.close()
+        saveToFile(finalCommand1)
 
 def step8(sampleIDs, PicardJarDirectory, PicardFolder):
     command1 = 'java -Xmx2g -jar ~/anaconda/jar/MarkDuplicates.jar I=/path/to/6_picard/Genus_species-aln_RG.bam O=/path/to/6_picard/Genus_species-aln_MD.bam METRICS_FILE=/path/to/6_picard/Genus_species.metrics MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=250 ASSUME_SORTED=true REMOVE_DUPLICATES=false'
@@ -188,9 +172,7 @@ def step8(sampleIDs, PicardJarDirectory, PicardFolder):
     
         newCommand1 = newCommand1.replace('/path/to/6_picard', PicardFolder)
         finalCommand1 = newCommand1.replace('Genus_species', speciesID)
-        file = open('commands.sh', 'a')
-        file.write(finalCommand1 + ' &&' + '\n')
-        file.close()
+        saveToFile(finalCommand1)
 
 def step9(sampleIDs, PicardJarDirectory, PicardFolder, MergedBamsFolder, FinalSpeciesName):
     commandPart1 =  'java -Xmx2g -jar ~/anaconda/jar/MergeSamFiles.jar SO=coordinate AS=true'
@@ -202,32 +184,35 @@ def step9(sampleIDs, PicardJarDirectory, PicardFolder, MergedBamsFolder, FinalSp
         if args.SinglePicardJar == True:
             newPicardJarDirectory = PicardJarDirectory + ' MergeSamFiles'  
             finalCommandPart1 = commandPart1.replace('anaconda/jar/MergeSamFiles.jar', newPicardJarDirectory)
-            file = open('commands.sh', 'a')
-            file.write(finalCommandPart1 + ' \\' + '\n')
-            file.close()
+            saveToFile(finalCommandPart1)
 
         else:
             finalCommandPart1 = commandPart1.replace('anaconda/jar/MergeSamFiles.jar', PicardJarDirectory)
-            file = open('commands.sh', 'a')
-            file.write(finalCommandPart1 + ' \\' + '\n')
-            file.close()
+            saveToFile(finalCommandPart1)
 
 
     for x in sampleIDs:
         speciesID = x
 
         newCommandPart2 = commandPart2.replace('/path/to/6_picard', PicardFolder)
-        finalCommandPart2 = newCommandPart2.replace('Genus_species', speciesID)
-        file = open('commands.sh', 'a')
-        file.write(finalCommandPart2 + ' \\' + '\n')
-        file.close()
+        finalCommandPart2 = newCommandPart2.replace('Genus_species', speciesID) 
+        saveToFile(finalCommandPart2)
     
     newCommandPart3 = commandPart3.replace('/path/to/7_merge-bams', MergedBamsFolder)
     finalCommandPart3 = newCommandPart3.replace('Genus_species', FinalSpeciesName)
-    file = open('commands.sh', 'a')
-    file.write(finalCommandPart3)
-    file.close()
+    saveToFile(finalCommandPart3)
 
+def step10():
+    pass
 
+def step11():
+    pass
 
+def step11():
+    pass
+
+def step11():
+    pass
         
+def step11():
+    pass
