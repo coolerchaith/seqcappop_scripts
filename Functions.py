@@ -300,7 +300,7 @@ def step19(FinalSpeciesName, GATKOutputFolder):
     args = getArgs()
     command1 = ''' cat /path/to/8_GATK/Genus_species_SNPs_no_indels.vcf | grep 'PASS\|^#' > /path/to/8_GATK/Genus_species_SNPs_pass-only.vcf '''
 
-    newCommand1 = command1.replace('path/to/8_GATK', GATKOutputFolder)
+    newCommand1 = command1.replace('/path/to/8_GATK', GATKOutputFolder)
     finalCommand1 = newCommand1.replace('Genus_species', FinalSpeciesName)
     saveToFile(finalCommand1)
 
