@@ -61,6 +61,10 @@ def getArgs():
         action="store_true",
         help='Optional, add if you dont want to make new folders'
     )
+    parser.add_argument(
+        '--Log',
+        action="Optional, prints the output of each step in a log file"
+    )
     args = parser.parse_args()
     if not args.ReferenceAssembly or not args.MappingFolder or not args.CleanReadsFolder or not args.PicardFolder  or not args.MergedBamsFolder  or not args.FinalSpeciesName or not args.GATKDirectory: 
         print('missing argument, please fix :)')
@@ -86,9 +90,14 @@ def getListofFastaFilesFromFolders(path):
         print('No folders found')
     return fastaFiles
 
-def saveToFile(finalCommand):
+def saveToFile(finalCommand, currentStep):
+    args = getArgs()
     file = open('commands.sh', 'a')
     file.write(finalCommand + ' &&' + '\n')
+    if args.log:
+        file.write(finalCommand + +' >> ' + 'SecappopLog/step ' + currentStep + '.txt' + ' &&' + '\n')
+    else:
+        file.write(finalCommand + ' &&' + '\n')
     file.close()
 
 def gatkCommands(command, GATKDirectory, mappingFolder, ReferenceAssembly, MergedBamsFolder, FinalSpeciesName, GATKOutputFolder):
@@ -112,25 +121,25 @@ def step4(sampleIDs, ReferenceAssembly, cleanReadsFolder, mappingFolder):
 
         newCommand1 = command1.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta', ReferenceAssembly)
         finalCommand1 = newCommand1.replace('/Genus_species.fasta', speciesID)
-        saveToFile(finalCommand1)
+        saveToFile(finalCommand1, 'step4')
 
         newCommand2 = command2.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta', ReferenceAssembly)
         newCommand2 = newCommand2.replace('/path/to/2_clean-reads', cleanReadsFolder)
         newCommand2 = newCommand2.replace('/path/to/5-mapping', mappingFolder)
         finalCommand2 = newCommand2.replace('Genus_species', speciesID)
-        saveToFile(finalCommand2)
+        saveToFile(finalCommand2, 'step4')
         
         newCommand3 = command3.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta', ReferenceAssembly)
         newCommand3 = newCommand3.replace('/path/to/2_clean-reads', cleanReadsFolder)
         newCommand3 = newCommand3.replace('/path/to/5-mapping', mappingFolder)
         finalCommand3 = newCommand3.replace('Genus_species', speciesID)
-        saveToFile(finalCommand3)
+        saveToFile(finalCommand3, 'step4')
 
         newCommand4 = command4.replace('/path/to/4_match-contigs-to-probes/Genus_species.fasta',ReferenceAssembly)
         newCommand4 = newCommand4.replace('/path/to/2_clean-reads', cleanReadsFolder)
         newCommand4 = newCommand4.replace('/path/to/5-mapping', mappingFolder)
         finalCommand4 = newCommand4.replace('Genus_species', speciesID)
-        saveToFile(finalCommand4)
+        saveToFile(finalCommand4, 'step4')
 
 def step5(sampleIDs, MappingFolder):
     command1 = 'samtools view -bS /path/to/5-mapping/Genus_species-aln.sam > /path/to/5-mapping/Genus_species-aln.bam'
